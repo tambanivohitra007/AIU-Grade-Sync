@@ -1,0 +1,5 @@
+{
+  "name": "GradeSync AI",
+  "description": "An intelligent tool that synchronizes Moodle CSV grade exports into institutional Excel templates using Gemini for smart column mapping.",
+  "requestFramePermissions": []
+}
