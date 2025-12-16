@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { MatchedStudent, ProcessingConfig, ColumnMapping } from '../types';
 import { calculateTotal, getLetterGrade, getGradeColorInfo } from '../services/gradeUtils';
 import GradeDetailModal from './GradeDetailModal';
+import Dashboard from './Dashboard';
 
 interface PreviewTableProps {
   matches: MatchedStudent[];
@@ -14,18 +15,6 @@ const ITEMS_PER_PAGE = 10;
 const PreviewTable: React.FC<PreviewTableProps> = ({ matches, config, mapping }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStudent, setSelectedStudent] = useState<MatchedStudent | null>(null);
-
-  // Grade Distribution Calculation
-  const gradeDistribution = useMemo(() => {
-    const dist: Record<string, number> = { 'A': 0, 'B+': 0, 'B': 0, 'C+': 0, 'C': 0, 'D+': 0, 'D': 0, 'F': 0 };
-    matches.forEach(m => {
-        const grade = getLetterGrade(calculateTotal(m, config));
-        if (dist[grade] !== undefined) dist[grade]++;
-    });
-    return dist;
-  }, [matches, config]);
-  
-  const maxGradeCount = Math.max(...Object.values(gradeDistribution), 1);
 
   // Pagination Logic
   const totalPages = Math.ceil(matches.length / ITEMS_PER_PAGE);
@@ -45,58 +34,20 @@ const PreviewTable: React.FC<PreviewTableProps> = ({ matches, config, mapping })
         onClose={() => setSelectedStudent(null)}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Summary Card */}
-        <div className="lg:col-span-1 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-6 shadow-lg relative overflow-hidden flex flex-col justify-center">
-            <div className="absolute inset-0 bg-purple-500/5 pointer-events-none"></div>
-            <div className="flex items-center space-x-2 text-purple-600 dark:text-purple-300 relative z-10 mb-4">
-                <i className="fas fa-chart-pie drop-shadow-[0_0_5px_rgba(192,132,252,0.8)]"></i>
-                <span className="font-semibold text-sm tracking-wide">Config Summary</span>
-            </div>
-            <div className="space-y-2 relative z-10">
-                <div className="flex justify-between text-sm text-slate-500 dark:text-slate-400"><span>Daily:</span> <span className="font-bold text-slate-700 dark:text-slate-200">{config.dailyPercentage}%</span></div>
-                <div className="flex justify-between text-sm text-slate-500 dark:text-slate-400"><span>Midterm:</span> <span className="font-bold text-slate-700 dark:text-slate-200">{config.midtermPercentage}%</span></div>
-                <div className="flex justify-between text-sm text-slate-500 dark:text-slate-400"><span>Final:</span> <span className="font-bold text-slate-700 dark:text-slate-200">{config.finalPercentage}%</span></div>
-                <div className="flex justify-between text-sm text-slate-500 dark:text-slate-400"><span>Min. Passing:</span> <span className="font-bold text-emerald-600 dark:text-emerald-400">{config.passingGrade}</span></div>
-                <div className="h-px bg-slate-200 dark:bg-slate-700/50 my-2"></div>
-                <div className="flex justify-between items-center">
-                    <span className="text-sm text-slate-500 dark:text-slate-400">Matches:</span>
-                    <span className="text-xs text-purple-700 dark:text-purple-200 font-bold bg-purple-100 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-500/30 px-3 py-1 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.2)]">
-                        {matches.length} Students
-                    </span>
-                </div>
-            </div>
-        </div>
+      {/* DASHBOARD */}
+      <Dashboard matches={matches} config={config} />
 
-        {/* Grade Distribution Chart */}
-        <div className="lg:col-span-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-6 shadow-lg relative overflow-hidden">
-            <div className="absolute inset-0 bg-emerald-500/5 pointer-events-none"></div>
-             <div className="flex items-center space-x-2 text-emerald-600 dark:text-emerald-300 relative z-10 mb-4">
-                <i className="fas fa-chart-bar drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]"></i>
-                <span className="font-semibold text-sm tracking-wide">Grade Analytics</span>
-            </div>
-            <div className="flex items-end justify-between h-32 gap-2 relative z-10 px-2">
-                {Object.keys(gradeDistribution).map((grade) => {
-                    const count = gradeDistribution[grade];
-                    const heightPercent = (count / maxGradeCount) * 100;
-                    return (
-                        <div key={grade} className="flex flex-col items-center flex-1 group">
-                            <div className="text-[10px] text-emerald-600 dark:text-emerald-400 mb-1 opacity-0 group-hover:opacity-100 transition-opacity font-bold">{count}</div>
-                            <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-t-sm relative h-full flex items-end overflow-hidden">
-                                <div 
-                                    className={`w-full bg-gradient-to-t from-emerald-600 to-emerald-400 dark:from-emerald-900 dark:to-emerald-500 transition-all duration-1000 ease-out hover:brightness-110 ${count > 0 ? 'shadow-[0_0_10px_rgba(16,185,129,0.3)]' : ''}`}
-                                    style={{ height: `${heightPercent}%` }}
-                                ></div>
-                            </div>
-                            <div className="text-xs font-bold text-slate-400 dark:text-slate-500 mt-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors">{grade}</div>
-                        </div>
-                    );
-                })}
-            </div>
-        </div>
-      </div>
-
+      {/* DATA TABLE */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-xl overflow-hidden shadow-xl dark:shadow-2xl">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950/50">
+           <h3 className="font-bold text-slate-700 dark:text-slate-200 flex items-center">
+             <i className="fas fa-table mr-2 text-slate-400"></i> Detailed Grade Sheet
+           </h3>
+           <span className="text-xs text-slate-500 font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1 rounded-full">
+             {matches.length} Students
+           </span>
+        </div>
+
         <div className="overflow-x-auto">
             <table className="w-full text-sm text-left text-slate-500 dark:text-slate-400">
                 <thead className="text-xs text-slate-500 dark:text-slate-500 uppercase bg-slate-50 dark:bg-slate-950/80 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800">

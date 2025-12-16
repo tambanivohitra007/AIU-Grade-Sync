@@ -48,3 +48,56 @@ export const getGradeColorInfo = (total: number, passingGradeLabel: string) => {
 
     return { argb: null, css: 'text-purple-600 dark:text-purple-300', isFailing: false };
 };
+
+export const calculateStatistics = (matches: MatchedStudent[], config: ProcessingConfig) => {
+    if (matches.length === 0) return null;
+
+    const totals = matches.map(m => calculateTotal(m, config));
+    const rawScores = {
+        daily: matches.map(m => m.daily),
+        midterm: matches.map(m => m.midterm),
+        final: matches.map(m => m.final)
+    };
+
+    const sum = totals.reduce((a, b) => a + b, 0);
+    const avg = sum / totals.length;
+    
+    // Sort for stats
+    const sortedTotals = [...totals].sort((a, b) => a - b);
+    const min = sortedTotals[0];
+    const max = sortedTotals[sortedTotals.length - 1];
+    const median = sortedTotals[Math.floor(sortedTotals.length / 2)];
+
+    const passingThreshold = GRADE_SCALE.find(g => g.label === config.passingGrade)?.min || 50;
+    const passCount = totals.filter(t => t >= passingThreshold).length;
+    const failCount = totals.length - passCount;
+
+    const gradeDist: Record<string, number> = {};
+    GRADE_SCALE.forEach(g => gradeDist[g.label] = 0);
+    totals.forEach(t => {
+        const grade = getLetterGrade(t);
+        if (gradeDist[grade] !== undefined) gradeDist[grade]++;
+    });
+
+    // Component Averages (Raw)
+    const avgDaily = rawScores.daily.reduce((a, b) => a + b, 0) / matches.length;
+    const avgMidterm = rawScores.midterm.reduce((a, b) => a + b, 0) / matches.length;
+    const avgFinal = rawScores.final.reduce((a, b) => a + b, 0) / matches.length;
+
+    return {
+        count: matches.length,
+        average: avg,
+        median,
+        highest: max,
+        lowest: min,
+        passRate: (passCount / matches.length) * 100,
+        passCount,
+        failCount,
+        gradeDistribution: gradeDist,
+        components: {
+            daily: avgDaily,
+            midterm: avgMidterm,
+            final: avgFinal
+        }
+    };
+};
