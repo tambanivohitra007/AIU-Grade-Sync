@@ -1,16 +1,19 @@
 import React, { useState, useMemo } from 'react';
-import { MatchedStudent, ProcessingConfig } from '../types';
+import { MatchedStudent, ProcessingConfig, ColumnMapping } from '../types';
 import { calculateTotal, getLetterGrade, getGradeColorInfo } from '../services/gradeUtils';
+import GradeDetailModal from './GradeDetailModal';
 
 interface PreviewTableProps {
   matches: MatchedStudent[];
   config: ProcessingConfig;
+  mapping: ColumnMapping;
 }
 
 const ITEMS_PER_PAGE = 10;
 
-const PreviewTable: React.FC<PreviewTableProps> = ({ matches, config }) => {
+const PreviewTable: React.FC<PreviewTableProps> = ({ matches, config, mapping }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedStudent, setSelectedStudent] = useState<MatchedStudent | null>(null);
 
   // Grade Distribution Calculation
   const gradeDistribution = useMemo(() => {
@@ -34,6 +37,14 @@ const PreviewTable: React.FC<PreviewTableProps> = ({ matches, config }) => {
 
   return (
     <div className="space-y-6">
+      <GradeDetailModal 
+        isOpen={!!selectedStudent}
+        student={selectedStudent}
+        config={config}
+        mapping={mapping}
+        onClose={() => setSelectedStudent(null)}
+      />
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Summary Card */}
         <div className="lg:col-span-1 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-6 shadow-lg relative overflow-hidden flex flex-col justify-center">
@@ -98,12 +109,13 @@ const PreviewTable: React.FC<PreviewTableProps> = ({ matches, config }) => {
                         <th className="px-6 py-4 text-right font-semibold tracking-wider text-slate-600 dark:text-slate-400">Final</th>
                         <th className="px-6 py-4 text-right bg-purple-50 dark:bg-purple-900/10 text-purple-600 dark:text-purple-300 font-bold border-l border-slate-200 dark:border-slate-800">Total</th>
                         <th className="px-6 py-4 text-center bg-purple-50 dark:bg-purple-900/10 text-purple-600 dark:text-purple-300 font-bold">Grade</th>
+                        <th className="px-6 py-4 text-center font-semibold tracking-wider text-slate-600 dark:text-slate-400">Proof</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                     {matches.length === 0 ? (
                         <tr>
-                            <td colSpan={8} className="px-6 py-12 text-center text-slate-500 dark:text-slate-600">
+                            <td colSpan={9} className="px-6 py-12 text-center text-slate-500 dark:text-slate-600">
                                 <div className="flex flex-col items-center">
                                     <i className="fas fa-search text-3xl mb-3 text-slate-300 dark:text-slate-700"></i>
                                     <span>No students matched in the template. Please check your IDs.</span>
@@ -138,6 +150,15 @@ const PreviewTable: React.FC<PreviewTableProps> = ({ matches, config }) => {
                                         }`}>
                                             {grade}
                                         </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-center">
+                                        <button 
+                                            onClick={() => setSelectedStudent(student)}
+                                            className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-purple-100 dark:hover:bg-purple-900/50 hover:text-purple-600 dark:hover:text-purple-300 transition-all flex items-center justify-center mx-auto shadow-sm hover:shadow-md hover:scale-105"
+                                            title="View Details"
+                                        >
+                                            <i className="fas fa-list text-xs"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             );

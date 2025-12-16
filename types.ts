@@ -6,6 +6,7 @@ export interface StudentGrade {
   daily: number;
   midterm: number;
   final: number;
+  raw: Record<string, string>; // Store the raw CSV row data
 }
 
 export interface MatchedStudent extends StudentGrade {

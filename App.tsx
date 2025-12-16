@@ -425,7 +425,7 @@ const App: React.FC = () => {
                 {/* STEP 3: PREVIEW */}
                 {step === Step.PREVIEW && (
                     <div className="space-y-8 animate-fade-in">
-                        <PreviewTable matches={matches} config={config} />
+                        <PreviewTable matches={matches} config={config} mapping={mapping} />
                         
                         <div className="flex justify-between pt-6 border-t border-slate-200 dark:border-slate-800/50">
                             <button 

@@ -49,6 +49,7 @@ export const parseMoodleCSV = (
             daily: parseDouble(row[mapping.daily]),
             midterm: parseDouble(row[mapping.midterm]),
             final: parseDouble(row[mapping.final]),
+            raw: row // Store raw data
           })).filter(s => s.id); 
           resolve(grades);
         } catch (e) {
