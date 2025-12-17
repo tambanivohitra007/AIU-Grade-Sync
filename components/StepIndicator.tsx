@@ -22,7 +22,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep }) => {
             <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-purple-500/30 dark:bg-purple-500/40 blur-md transition-all duration-500 ${currentStep === step.num ? 'opacity-100 scale-150' : 'opacity-0 scale-50'}`}></div>
             
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-300 border-2 relative z-10 ${
+              className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold transition-all duration-300 border-2 relative z-10 ${
                 currentStep >= step.num
                   ? 'bg-purple-900 dark:bg-purple-600 border-purple-900 dark:border-purple-400 text-white shadow-[0_0_15px_rgba(192,132,252,0.6)]'
                   : 'bg-slate-100 dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-600'
@@ -39,7 +39,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep }) => {
             </span>
           </div>
           {index < steps.length - 1 && (
-            <div className="flex-1 max-w-[5rem] mx-2 relative h-0.5 mt-[-1.25rem] bg-slate-300 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div className="flex-1 max-w-[5rem] mx-2 relative h-0.5 mt-[-1.25rem] bg-slate-300 dark:bg-slate-800 rounded-sm overflow-hidden">
                 <div 
                     className={`absolute top-0 left-0 h-full w-full bg-gradient-to-r from-purple-900 to-purple-700 dark:from-purple-600 dark:to-purple-400 transition-all duration-700 ease-out origin-left ${
                         currentStep > step.num ? 'scale-x-100 shadow-[0_0_10px_rgba(192,132,252,0.8)]' : 'scale-x-0'

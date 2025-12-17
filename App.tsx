@@ -128,8 +128,6 @@ const App: React.FC = () => {
     setApiKey(key);
     localStorage.setItem('gradeSync_apiKey', key);
     setIsKeyModalOpen(false);
-    // If we have a file loaded but no mapping, trigger mapping logic (via effect) by resetting headers logic if needed
-    // or just let the effect pick it up if dependencies change
   };
 
   const handleNextToConfigure = () => {
@@ -219,14 +217,14 @@ const App: React.FC = () => {
       <div className="fixed top-6 right-6 flex items-center gap-3 z-50">
         <button 
             onClick={() => setIsKeyModalOpen(true)}
-            className="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:scale-110 transition-all group"
+            className="w-10 h-10 rounded-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:scale-110 transition-all group"
             title="Configure API Key"
         >
             <i className={`fas fa-key text-lg ${!apiKey ? 'text-red-500 animate-pulse' : 'text-purple-500'}`}></i>
         </button>
         <button 
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:scale-110 transition-all group"
+            className="w-10 h-10 rounded-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:scale-110 transition-all group"
         >
             <i className={`fas ${isDarkMode ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-500'} text-lg transition-transform duration-500 rotate-0 dark:rotate-180`}></i>
         </button>
@@ -235,14 +233,14 @@ const App: React.FC = () => {
       <div className="max-w-5xl w-full mx-auto">
         <header className="mb-10 text-center relative">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-purple-600/10 dark:bg-purple-600/20 blur-[50px] rounded-full pointer-events-none"></div>
-            <div className="relative inline-flex items-center justify-center w-16 h-16 bg-white dark:bg-slate-900 rounded-2xl mb-5 ring-1 ring-purple-500/30 shadow-[0_0_30px_rgba(192,132,252,0.15)] transition-colors duration-300">
+            <div className="relative inline-flex items-center justify-center w-16 h-16 bg-white dark:bg-slate-900 rounded-lg mb-5 ring-1 ring-purple-500/30 shadow-[0_0_30px_rgba(192,132,252,0.15)] transition-colors duration-300">
                 <i className="fas fa-graduation-cap text-3xl text-purple-900 dark:text-primary drop-shadow-[0_0_8px_rgba(192,132,252,0.5)]"></i>
             </div>
             <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-700 via-purple-900 dark:via-purple-100 to-slate-500 dark:to-slate-400 tracking-tight drop-shadow-sm">GradeSync AI</h1>
             <p className="text-slate-500 dark:text-slate-400 mt-2 text-lg font-light tracking-wide">Moodle <span className="text-purple-900 dark:text-purple-400 mx-1">→</span> Excel</p>
         </header>
 
-        <div className="w-full bg-white/60 dark:bg-slate-900/60 rounded-2xl shadow-xl dark:shadow-2xl border border-white/50 dark:border-slate-800/60 overflow-hidden backdrop-blur-xl relative transition-all duration-300">
+        <div className="w-full bg-white/60 dark:bg-slate-900/60 rounded-lg shadow-xl dark:shadow-2xl border border-white/50 dark:border-slate-800/60 overflow-hidden backdrop-blur-xl relative transition-all duration-300">
             {/* Top glowing line */}
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
 
@@ -251,7 +249,7 @@ const App: React.FC = () => {
 
                 {/* ERROR MESSAGE */}
                 {errorMsg && (
-                    <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-500/30 p-4 mb-8 rounded-lg animate-fade-in shadow-sm">
+                    <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-500/30 p-4 mb-8 rounded animate-fade-in shadow-sm">
                         <div className="flex">
                             <div className="flex-shrink-0">
                                 <i className="fas fa-exclamation-circle text-red-500 dark:text-red-400 mt-0.5"></i>
@@ -287,7 +285,7 @@ const App: React.FC = () => {
                             <button 
                                 onClick={handleNextToConfigure}
                                 disabled={!csvFile || !templateFile || isLoading}
-                                className={`px-8 py-3.5 rounded-xl font-bold flex items-center space-x-2 transition-all duration-300 ${
+                                className={`px-8 py-3.5 rounded-md font-bold flex items-center space-x-2 transition-all duration-300 ${
                                     !csvFile || !templateFile || isLoading
                                     ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border border-slate-300 dark:border-slate-700' 
                                     : 'bg-gradient-to-r from-purple-900 to-purple-800 dark:from-purple-600 dark:to-purple-500 text-white hover:brightness-110 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] active:scale-95 border border-purple-400/20'
@@ -305,7 +303,7 @@ const App: React.FC = () => {
                     <div className="space-y-10 animate-fade-in">
                         
                         {/* Percentage Config */}
-                        <div className={`bg-slate-50 dark:bg-slate-800/30 p-6 rounded-xl border relative overflow-hidden group transition-colors duration-300 ${isWeightError ? 'border-red-500/50' : 'border-slate-200 dark:border-slate-700/50'}`}>
+                        <div className={`bg-slate-50 dark:bg-slate-800/30 p-6 rounded-md border relative overflow-hidden group transition-colors duration-300 ${isWeightError ? 'border-red-500/50' : 'border-slate-200 dark:border-slate-700/50'}`}>
                             <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${isWeightError ? 'bg-red-500/5' : 'bg-purple-500/5'}`}></div>
                             
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-slate-200 dark:border-slate-700/50 pb-3 gap-4">
@@ -315,9 +313,9 @@ const App: React.FC = () => {
                                 
                                 <div className="flex items-center space-x-4 w-full md:w-auto">
                                     {/* Visual Progress Bar */}
-                                    <div className="h-3 w-full md:w-48 bg-slate-200 dark:bg-slate-900 rounded-full overflow-hidden border border-slate-300 dark:border-slate-700 relative">
+                                    <div className="h-3 w-full md:w-48 bg-slate-200 dark:bg-slate-900 rounded-sm overflow-hidden border border-slate-300 dark:border-slate-700 relative">
                                         <div 
-                                            className={`h-full transition-all duration-500 ${
+                                            className={`h-full rounded-sm transition-all duration-500 ${
                                                 isWeightError ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]' : 
                                                 totalPercentage === 100 ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]' : 
                                                 'bg-amber-400 dark:bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.8)]'
@@ -346,7 +344,7 @@ const App: React.FC = () => {
                                                 max="100"
                                                 value={(config as any)[`${key}Percentage`]}
                                                 onChange={(e) => setConfig({...config, [`${key}Percentage`]: parseFloat(e.target.value) || 0})}
-                                                className={`w-full px-4 py-3 bg-white dark:bg-slate-900/80 rounded-lg border text-slate-800 dark:text-white outline-none transition-all placeholder-slate-400 dark:placeholder-slate-600 ${
+                                                className={`w-full px-4 py-3 bg-white dark:bg-slate-900/80 rounded border text-slate-800 dark:text-white outline-none transition-all placeholder-slate-400 dark:placeholder-slate-600 ${
                                                     isWeightError 
                                                     ? 'border-red-300 dark:border-red-500/50 focus:ring-2 focus:ring-red-500/50 focus:border-red-500/50' 
                                                     : 'border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 group-hover/input:border-slate-400 dark:group-hover/input:border-slate-600'
@@ -366,7 +364,7 @@ const App: React.FC = () => {
                                         <select
                                             value={config.passingGrade}
                                             onChange={(e) => setConfig({...config, passingGrade: e.target.value})}
-                                            className="w-full px-4 py-3 bg-white dark:bg-slate-900/80 rounded-lg border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white outline-none transition-all cursor-pointer focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 hover:border-slate-400 dark:hover:border-slate-600 appearance-none"
+                                            className="w-full px-4 py-3 bg-white dark:bg-slate-900/80 rounded border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white outline-none transition-all cursor-pointer focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 hover:border-slate-400 dark:hover:border-slate-600 appearance-none"
                                         >
                                             {GRADE_SCALE.filter(g => g.label !== 'F').map(g => (
                                                 <option key={g.label} value={g.label}>{g.label} ({g.min}+)</option>
@@ -425,7 +423,7 @@ const App: React.FC = () => {
                                             <select
                                                 value={(mapping as any)[field]}
                                                 onChange={(e) => setMapping({...mapping, [field]: e.target.value})}
-                                                className={`w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 outline-none appearance-none transition-all cursor-pointer hover:border-slate-400 dark:hover:border-slate-600 hover:bg-white dark:hover:bg-slate-800 ${!(mapping as any)[field] ? 'border-red-300 dark:border-red-500/30' : 'border-slate-300 dark:border-slate-700'}`}
+                                                className={`w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-800/50 rounded border text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 outline-none appearance-none transition-all cursor-pointer hover:border-slate-400 dark:hover:border-slate-600 hover:bg-white dark:hover:bg-slate-800 ${!(mapping as any)[field] ? 'border-red-300 dark:border-red-500/30' : 'border-slate-300 dark:border-slate-700'}`}
                                             >
                                                 <option value="">Select Column...</option>
                                                 {csvHeaders.map(h => (
@@ -451,7 +449,7 @@ const App: React.FC = () => {
                             <button 
                                 onClick={handlePreview}
                                 disabled={isLoading || isWeightError || !isMappingComplete}
-                                className={`px-8 py-3 rounded-xl font-bold transition-all flex items-center space-x-2 border border-transparent ${
+                                className={`px-8 py-3 rounded-md font-bold transition-all flex items-center space-x-2 border border-transparent ${
                                     isLoading || isWeightError || !isMappingComplete
                                     ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border-slate-300 dark:border-slate-700'
                                     : 'bg-gradient-to-r from-purple-900 to-purple-800 dark:from-purple-600 dark:to-purple-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:brightness-110 active:scale-95 border-purple-400/20'
@@ -483,7 +481,7 @@ const App: React.FC = () => {
                             <button 
                                 onClick={handleProcess}
                                 disabled={isLoading}
-                                className={`px-8 py-3 rounded-xl font-bold transition-all flex items-center space-x-2 border border-transparent ${
+                                className={`px-8 py-3 rounded-md font-bold transition-all flex items-center space-x-2 border border-transparent ${
                                     isLoading
                                     ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border-slate-300 dark:border-slate-700'
                                     : 'bg-gradient-to-r from-purple-900 to-purple-800 dark:from-purple-600 dark:to-purple-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:brightness-110 active:scale-95 border-purple-400/20'
@@ -500,7 +498,7 @@ const App: React.FC = () => {
                 {step === Step.COMPLETE && processingResult && (
                     <div className="text-center space-y-6 py-8 animate-fade-in relative">
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-emerald-500/10 blur-[60px] rounded-full pointer-events-none"></div>
-                        <div className="relative inline-flex items-center justify-center w-24 h-24 bg-emerald-100 dark:bg-emerald-950/30 rounded-full ring-1 ring-emerald-500/50 shadow-[0_0_40px_rgba(16,185,129,0.3)]">
+                        <div className="relative inline-flex items-center justify-center w-24 h-24 bg-emerald-100 dark:bg-emerald-950/30 rounded-xl ring-1 ring-emerald-500/50 shadow-[0_0_40px_rgba(16,185,129,0.3)]">
                             <i className="fas fa-check text-4xl text-emerald-600 dark:text-emerald-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.8)]"></i>
                         </div>
                         
@@ -514,7 +512,7 @@ const App: React.FC = () => {
                         <div className="flex flex-col md:flex-row justify-center items-center gap-4 mt-10 relative z-10">
                             <button 
                                 onClick={downloadResult}
-                                className="w-full md:w-auto bg-gradient-to-r from-emerald-600 to-emerald-500 text-white px-8 py-4 rounded-xl font-bold shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] hover:scale-105 transition-all flex items-center justify-center space-x-2 border border-emerald-400/20"
+                                className="w-full md:w-auto bg-gradient-to-r from-emerald-600 to-emerald-500 text-white px-8 py-4 rounded-md font-bold shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] hover:scale-105 transition-all flex items-center justify-center space-x-2 border border-emerald-400/20"
                             >
                                 <i className="fas fa-download"></i>
                                 <span>Download Updated Excel</span>
@@ -522,7 +520,7 @@ const App: React.FC = () => {
                             
                             <button 
                                 onClick={reset}
-                                className="w-full md:w-auto border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 px-6 py-4 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-700/80 hover:text-slate-900 dark:hover:text-white transition-all hover:border-slate-400 dark:hover:border-slate-500"
+                                className="w-full md:w-auto border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 px-6 py-4 rounded-md font-semibold hover:bg-slate-200 dark:hover:bg-slate-700/80 hover:text-slate-900 dark:hover:text-white transition-all hover:border-slate-400 dark:hover:border-slate-500"
                             >
                                 Start Over
                             </button>

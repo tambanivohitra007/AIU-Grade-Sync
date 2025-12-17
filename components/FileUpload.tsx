@@ -35,7 +35,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ label, accept, onFileSelect, se
             onDragLeave={() => setIsDragOver(false)}
             onDrop={handleDrop}
             className={`
-                relative h-36 w-full border border-dashed rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 group overflow-hidden
+                relative h-36 w-full border border-dashed rounded-md flex flex-col items-center justify-center cursor-pointer transition-all duration-300 group overflow-hidden
                 ${isDragOver 
                     ? 'border-purple-500 dark:border-primary bg-purple-50 dark:bg-purple-900/20 shadow-[0_0_20px_rgba(192,132,252,0.2)]' 
                     : 'border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:border-slate-400 dark:hover:border-slate-500'}
@@ -55,7 +55,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ label, accept, onFileSelect, se
             
             {selectedFile ? (
                 <div className="text-center p-4 animate-fade-in relative z-10">
-                    <div className="w-12 h-12 rounded-full bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center mx-auto mb-3 ring-1 ring-purple-500/30 shadow-[0_0_15px_rgba(192,132,252,0.2)]">
+                    <div className="w-12 h-12 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center mx-auto mb-3 ring-1 ring-purple-500/30 shadow-[0_0_15px_rgba(192,132,252,0.2)]">
                         <i className="fas fa-file-excel text-xl text-purple-900 dark:text-primary drop-shadow-[0_0_5px_rgba(192,132,252,0.8)]"></i>
                     </div>
                     <p className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate max-w-[200px]">{selectedFile.name}</p>
@@ -64,7 +64,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ label, accept, onFileSelect, se
                 </div>
             ) : (
                 <div className="text-center p-4 relative z-10">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 transition-colors duration-300 ${isDragOver ? 'bg-purple-100 dark:bg-primary/20 text-purple-900 dark:text-primary shadow-[0_0_15px_rgba(192,132,252,0.4)]' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 group-hover:text-purple-900 dark:group-hover:text-purple-300 group-hover:bg-slate-200 dark:group-hover:bg-slate-700'}`}>
+                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3 transition-colors duration-300 ${isDragOver ? 'bg-purple-100 dark:bg-primary/20 text-purple-900 dark:text-primary shadow-[0_0_15px_rgba(192,132,252,0.4)]' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 group-hover:text-purple-900 dark:group-hover:text-purple-300 group-hover:bg-slate-200 dark:group-hover:bg-slate-700'}`}>
                         <i className={`${iconClass} text-xl ${isDragOver ? 'drop-shadow-[0_0_5px_rgba(192,132,252,1)]' : ''}`}></i>
                     </div>
                     <p className="text-sm text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Click or drag & drop</p>
