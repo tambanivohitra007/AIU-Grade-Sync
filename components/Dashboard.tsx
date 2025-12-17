@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { MatchedStudent, ProcessingConfig } from '../types';
-import { calculateStatistics } from '../services/gradeUtils';
+import { calculateStatistics, GRADE_SCALE } from '../services/gradeUtils';
 
 interface DashboardProps {
   matches: MatchedStudent[];
@@ -12,7 +12,8 @@ const Dashboard: React.FC<DashboardProps> = ({ matches, config }) => {
 
   if (!stats) return null;
 
-  const maxDistCount = Math.max(...Object.values(stats.gradeDistribution), 1);
+  // Use Grade Distribution for the histogram
+  const maxCount = Math.max(...Object.values(stats.gradeDistribution), 1);
   const pieCircumference = 2 * Math.PI * 40; // r=40
   const passOffset = pieCircumference - (stats.passRate / 100) * pieCircumference;
 
@@ -72,7 +73,7 @@ const Dashboard: React.FC<DashboardProps> = ({ matches, config }) => {
       {/* Middle Row: Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Grade Distribution */}
+        {/* Grade Distribution Histogram */}
         <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm flex flex-col">
             <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center mb-6">
                 <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-3 text-purple-900 dark:text-purple-400">
@@ -81,31 +82,47 @@ const Dashboard: React.FC<DashboardProps> = ({ matches, config }) => {
                 Grade Distribution
             </h3>
             
-            <div className="flex-1 flex items-end justify-between gap-3 h-48 relative px-2">
-                {Object.keys(stats.gradeDistribution).map((grade) => {
-                    const count = stats.gradeDistribution[grade];
-                    const heightPercent = (count / maxDistCount) * 100;
+            <div className="flex-1 flex items-end justify-between gap-2 h-48 relative px-2">
+                {GRADE_SCALE.map((gradeDef) => {
+                    const count = stats.gradeDistribution[gradeDef.label];
+                    const heightPercent = (count / maxCount) * 100;
+                    
+                    const isFailing = gradeDef.label === 'F' || gradeDef.label === 'D' || gradeDef.label === 'D+'; 
+                    // Simple color logic: F is red, D is orange, C and above are purple/gradient
+                    let barColorClass = "bg-purple-900 dark:bg-purple-500";
+                    if (gradeDef.label === 'F') barColorClass = "bg-red-500";
+                    else if (gradeDef.label.startsWith('D')) barColorClass = "bg-orange-400";
+                    
                     return (
-                        <div key={grade} className="flex flex-col items-center flex-1 group h-full justify-end">
-                             <div className="mb-2 text-xs font-bold text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity -translate-y-2 group-hover:translate-y-0 duration-300">
-                                {count}
+                        <div key={gradeDef.label} className="flex flex-col items-center flex-1 group h-full justify-end relative">
+                             {/* Tooltip */}
+                             <div className="absolute bottom-full mb-2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                                Grade {gradeDef.label}: {count} students
                              </div>
-                             <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-t-lg relative h-full flex items-end overflow-hidden">
+                             
+                             {/* Bar Count Label */}
+                             <div className="mb-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                {count > 0 ? count : ''}
+                             </div>
+
+                             {/* Bar Container */}
+                             <div className="w-full bg-slate-100 dark:bg-slate-800/50 rounded-t-sm relative h-full flex items-end overflow-hidden">
+                                {/* The Bar */}
                                 <div 
-                                    className={`w-full rounded-t-lg transition-all duration-1000 ease-out group-hover:brightness-110 ${
-                                        grade === 'F' ? 'bg-red-500 dark:bg-red-500' :
-                                        grade.startsWith('D') ? 'bg-orange-500 dark:bg-orange-500' :
-                                        grade.startsWith('A') ? 'bg-emerald-600 dark:bg-emerald-500' :
-                                        'bg-purple-800 dark:bg-purple-500'
-                                    }`}
+                                    className={`w-full rounded-t-sm transition-all duration-1000 ease-out group-hover:brightness-110 ${barColorClass}`}
                                     style={{ height: `${heightPercent}%` }}
                                 ></div>
                             </div>
-                            <div className="text-xs font-bold text-slate-400 dark:text-slate-500 mt-3 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors">{grade}</div>
+                            
+                            {/* X-Axis Label */}
+                            <div className={`text-xs font-bold mt-3 ${gradeDef.label === 'F' ? 'text-red-500' : 'text-slate-600 dark:text-slate-400'}`}>
+                                {gradeDef.label}
+                            </div>
                         </div>
                     );
                 })}
             </div>
+            <div className="text-center mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Letter Grade</div>
         </div>
 
         {/* Pass/Fail & Component Breakdown */}

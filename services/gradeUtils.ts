@@ -1,4 +1,3 @@
-
 import { MatchedStudent, ProcessingConfig } from "../types";
 
 export const GRADE_SCALE = [
