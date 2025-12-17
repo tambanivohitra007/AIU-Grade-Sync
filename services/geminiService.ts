@@ -2,11 +2,11 @@ import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { ColumnMapping } from "../types";
 
 export const determineColumnMapping = async (
-  headers: string[]
+  headers: string[],
+  apiKey: string
 ): Promise<ColumnMapping> => {
-  const apiKey = process.env.API_KEY;
   if (!apiKey) {
-    throw new Error("API Key is missing.");
+    throw new Error("API Key is missing. Please configure it in settings.");
   }
 
   const ai = new GoogleGenAI({ apiKey });
@@ -55,8 +55,7 @@ export const determineColumnMapping = async (
     return JSON.parse(text) as ColumnMapping;
   } catch (error) {
     console.error("Gemini Mapping Error:", error);
-    // Fallback: Return empty strings or best guess logic if AI fails, 
-    // but here we throw to let the UI handle the error state.
+    // Rethrow to let UI handle it
     throw error;
   }
 };

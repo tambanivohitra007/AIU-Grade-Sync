@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import StepIndicator from './components/StepIndicator';
 import FileUpload from './components/FileUpload';
 import PreviewTable from './components/PreviewTable';
+import ApiKeyModal from './components/ApiKeyModal';
 import { Step, ColumnMapping, ProcessingConfig, ProcessingResult, MatchedStudent } from './types';
 import { determineColumnMapping } from './services/geminiService';
 import { getCSVHeaders, parseMoodleCSV, matchStudentsToTemplate, writeGradesToTemplate } from './services/excelService';
@@ -14,6 +15,10 @@ const App: React.FC = () => {
   const [templateFile, setTemplateFile] = useState<File | null>(null);
   const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  
+  // API Key State
+  const [apiKey, setApiKey] = useState<string>('');
+  const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
   
   const [mapping, setMapping] = useState<ColumnMapping>({
     id: '', firstName: '', lastName: '', daily: '', midterm: '', final: ''
@@ -31,10 +36,11 @@ const App: React.FC = () => {
   const [processingResult, setProcessingResult] = useState<ProcessingResult | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Load Config & Theme from LocalStorage
+  // Load Config, Theme & API Key from LocalStorage
   useEffect(() => {
     const savedConfig = localStorage.getItem('gradeSync_config');
     const savedTheme = localStorage.getItem('gradeSync_theme');
+    const savedKey = localStorage.getItem('gradeSync_apiKey');
     
     if (savedConfig) {
         try { 
@@ -44,10 +50,16 @@ const App: React.FC = () => {
         } catch (e) { console.error("Failed to load config", e); }
     }
 
+    if (savedKey) {
+        setApiKey(savedKey);
+    } else {
+        // Prompt for key on first load
+        setIsKeyModalOpen(true);
+    }
+
     if (savedTheme) {
         setIsDarkMode(savedTheme === 'dark');
     } else {
-        // Default to system preference if no save
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         setIsDarkMode(systemPrefersDark);
     }
@@ -74,7 +86,7 @@ const App: React.FC = () => {
   const isWeightError = totalPercentage > 100;
   const isMappingComplete = Object.values(mapping).every(val => val && val.trim() !== '');
 
-  // Effects
+  // Effects: Analyze CSV
   useEffect(() => {
     const analyzeCSV = async () => {
       if (csvFile && step === Step.UPLOAD) {
@@ -84,10 +96,18 @@ const App: React.FC = () => {
           setCsvHeaders(headers);
           
           try {
-            const suggestedMapping = await determineColumnMapping(headers);
-            setMapping(suggestedMapping);
+            if (apiKey) {
+                const suggestedMapping = await determineColumnMapping(headers, apiKey);
+                setMapping(suggestedMapping);
+            } else {
+                // If no key yet, we can't auto-map, but we don't crash. 
+                // The user will be prompted or can set manually.
+                console.warn("Skipping AI mapping: No API Key");
+                setIsKeyModalOpen(true);
+            }
           } catch (err) {
             console.error("Auto-mapping failed, falling back to manual", err);
+            // Don't show error message to user, just let them map manually
           }
           
           setIsLoading(false);
@@ -101,9 +121,17 @@ const App: React.FC = () => {
     if (csvFile && templateFile && csvHeaders.length === 0) {
        analyzeCSV();
     }
-  }, [csvFile, templateFile, step]);
+  }, [csvFile, templateFile, step, apiKey]);
 
   // Handlers
+  const handleSaveApiKey = (key: string) => {
+    setApiKey(key);
+    localStorage.setItem('gradeSync_apiKey', key);
+    setIsKeyModalOpen(false);
+    // If we have a file loaded but no mapping, trigger mapping logic (via effect) by resetting headers logic if needed
+    // or just let the effect pick it up if dependencies change
+  };
+
   const handleNextToConfigure = () => {
     if (!csvFile || !templateFile) {
         setErrorMsg("Please upload both files.");
@@ -136,20 +164,16 @@ const App: React.FC = () => {
 
   const handleProcess = async () => {
     if (!templateFile) return;
-    
-    // UI Loading state
     setIsLoading(true);
 
     try {
         const result = await writeGradesToTemplate(templateFile, matches, config);
-        
         setProcessingResult(result);
         if (result.success) {
             setStep(Step.COMPLETE);
         } else {
             setErrorMsg(result.message);
         }
-
     } catch (e: any) {
         setErrorMsg(e.message);
     } finally {
@@ -184,13 +208,29 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center py-10 px-4 transition-colors duration-500 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-200 via-slate-100 to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950">
       
-      {/* Theme Toggle */}
-      <button 
-        onClick={() => setIsDarkMode(!isDarkMode)}
-        className="fixed top-6 right-6 w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:scale-110 transition-all z-50 group"
-      >
-        <i className={`fas ${isDarkMode ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-500'} text-lg transition-transform duration-500 rotate-0 dark:rotate-180`}></i>
-      </button>
+      <ApiKeyModal 
+        isOpen={isKeyModalOpen}
+        onSave={handleSaveApiKey}
+        onClose={() => setIsKeyModalOpen(false)}
+        hasKey={!!apiKey}
+      />
+
+      {/* Header Buttons */}
+      <div className="fixed top-6 right-6 flex items-center gap-3 z-50">
+        <button 
+            onClick={() => setIsKeyModalOpen(true)}
+            className="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:scale-110 transition-all group"
+            title="Configure API Key"
+        >
+            <i className={`fas fa-key text-lg ${!apiKey ? 'text-red-500 animate-pulse' : 'text-purple-500'}`}></i>
+        </button>
+        <button 
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:scale-110 transition-all group"
+        >
+            <i className={`fas ${isDarkMode ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-500'} text-lg transition-transform duration-500 rotate-0 dark:rotate-180`}></i>
+        </button>
+      </div>
 
       <div className="max-w-5xl w-full mx-auto">
         <header className="mb-10 text-center relative">
@@ -360,9 +400,11 @@ const App: React.FC = () => {
                                 ) : (
                                     <button 
                                         onClick={() => {
+                                            if(!apiKey) { setIsKeyModalOpen(true); return; }
                                             setIsLoading(true);
-                                            determineColumnMapping(csvHeaders)
+                                            determineColumnMapping(csvHeaders, apiKey)
                                                 .then(setMapping)
+                                                .catch(err => console.error(err))
                                                 .finally(() => setIsLoading(false));
                                         }}
                                         className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-900 dark:hover:text-primary font-medium transition-colors flex items-center"
