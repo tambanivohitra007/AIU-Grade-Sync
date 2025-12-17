@@ -36,7 +36,7 @@ const GradeDetailModal: React.FC<GradeDetailModalProps> = ({ student, config, ma
         {/* Header */}
         <div className="bg-slate-50 dark:bg-slate-950 p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-start shrink-0">
             <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-900 dark:text-purple-400">
                      <i className="fas fa-user-graduate"></i>
                 </div>
                 <div>
@@ -91,10 +91,10 @@ const GradeDetailModal: React.FC<GradeDetailModalProps> = ({ student, config, ma
                                 </div>
                             </div>
                             <div className="relative h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mb-1">
-                                <div className="absolute top-0 left-0 h-full bg-purple-500 rounded-full" style={{ width: `${Math.min(student.midterm, 100)}%` }}></div>
+                                <div className="absolute top-0 left-0 h-full bg-purple-800 dark:bg-purple-500 rounded-full" style={{ width: `${Math.min(student.midterm, 100)}%` }}></div>
                             </div>
                             <div className="flex justify-between text-xs text-slate-400 bg-slate-50 dark:bg-slate-800/50 p-1.5 rounded-md border border-slate-100 dark:border-slate-700/50">
-                                <span><span className="font-semibold text-purple-600 dark:text-purple-400">{config.midtermPercentage}%</span> weight</span>
+                                <span><span className="font-semibold text-purple-900 dark:text-purple-400">{config.midtermPercentage}%</span> weight</span>
                                 <span className="font-mono text-slate-600 dark:text-slate-300">+{weightedMidterm.toFixed(2)} pts</span>
                             </div>
                         </div>
@@ -169,7 +169,7 @@ const GradeDetailModal: React.FC<GradeDetailModalProps> = ({ student, config, ma
                                         badge = <span className="ml-2 text-[10px] bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">Daily</span>;
                                     } else if (key === mapping.midterm) {
                                         highlightClass = "bg-purple-50 dark:bg-purple-900/10";
-                                        badge = <span className="ml-2 text-[10px] bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">Midterm</span>;
+                                        badge = <span className="ml-2 text-[10px] bg-purple-100 dark:bg-purple-900/40 text-purple-900 dark:text-purple-300 px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">Midterm</span>;
                                     } else if (key === mapping.final) {
                                         highlightClass = "bg-emerald-50 dark:bg-emerald-900/10";
                                         badge = <span className="ml-2 text-[10px] bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">Final</span>;

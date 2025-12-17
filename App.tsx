@@ -196,10 +196,10 @@ const App: React.FC = () => {
         <header className="mb-10 text-center relative">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-purple-600/10 dark:bg-purple-600/20 blur-[50px] rounded-full pointer-events-none"></div>
             <div className="relative inline-flex items-center justify-center w-16 h-16 bg-white dark:bg-slate-900 rounded-2xl mb-5 ring-1 ring-purple-500/30 shadow-[0_0_30px_rgba(192,132,252,0.15)] transition-colors duration-300">
-                <i className="fas fa-graduation-cap text-3xl text-primary drop-shadow-[0_0_8px_rgba(192,132,252,0.5)]"></i>
+                <i className="fas fa-graduation-cap text-3xl text-purple-900 dark:text-primary drop-shadow-[0_0_8px_rgba(192,132,252,0.5)]"></i>
             </div>
-            <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-700 via-purple-600 to-slate-500 dark:from-white dark:via-purple-100 dark:to-slate-400 tracking-tight drop-shadow-sm">GradeSync AI</h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-2 text-lg font-light tracking-wide">Moodle <span className="text-purple-500 dark:text-purple-400 mx-1">→</span> Excel</p>
+            <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-700 via-purple-900 dark:via-purple-100 to-slate-500 dark:to-slate-400 tracking-tight drop-shadow-sm">GradeSync AI</h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-2 text-lg font-light tracking-wide">Moodle <span className="text-purple-900 dark:text-purple-400 mx-1">→</span> Excel</p>
         </header>
 
         <div className="w-full bg-white/60 dark:bg-slate-900/60 rounded-2xl shadow-xl dark:shadow-2xl border border-white/50 dark:border-slate-800/60 overflow-hidden backdrop-blur-xl relative transition-all duration-300">
@@ -250,7 +250,7 @@ const App: React.FC = () => {
                                 className={`px-8 py-3.5 rounded-xl font-bold flex items-center space-x-2 transition-all duration-300 ${
                                     !csvFile || !templateFile || isLoading
                                     ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border border-slate-300 dark:border-slate-700' 
-                                    : 'bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:brightness-110 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] active:scale-95 border border-purple-400/20'
+                                    : 'bg-gradient-to-r from-purple-900 to-purple-800 dark:from-purple-600 dark:to-purple-500 text-white hover:brightness-110 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] active:scale-95 border border-purple-400/20'
                                 }`}
                             >
                                 {isLoading ? <span>Analyzing...</span> : <span>Next Step</span>}
@@ -270,7 +270,7 @@ const App: React.FC = () => {
                             
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-slate-200 dark:border-slate-700/50 pb-3 gap-4">
                                 <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-200 flex items-center">
-                                    <i className={`fas fa-sliders-h mr-3 drop-shadow-[0_0_8px_rgba(192,132,252,0.8)] ${isWeightError ? 'text-red-500 dark:text-red-400' : 'text-purple-500 dark:text-primary'}`}></i> Grade Weights
+                                    <i className={`fas fa-sliders-h mr-3 drop-shadow-[0_0_8px_rgba(192,132,252,0.8)] ${isWeightError ? 'text-red-500 dark:text-red-400' : 'text-purple-900 dark:text-primary'}`}></i> Grade Weights
                                 </h3>
                                 
                                 <div className="flex items-center space-x-4 w-full md:w-auto">
@@ -351,10 +351,10 @@ const App: React.FC = () => {
                         <div>
                             <div className="flex justify-between items-center mb-6 border-b border-slate-200 dark:border-slate-800/50 pb-3">
                                 <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-200 flex items-center">
-                                    <i className="fas fa-robot mr-3 text-purple-600 dark:text-primary drop-shadow-[0_0_8px_rgba(192,132,252,0.8)]"></i> Column Mapping
+                                    <i className="fas fa-robot mr-3 text-purple-900 dark:text-primary drop-shadow-[0_0_8px_rgba(192,132,252,0.8)]"></i> Column Mapping
                                 </h3>
                                 {isLoading ? (
-                                    <span className="text-xs text-purple-600 dark:text-primary font-medium flex items-center animate-pulse drop-shadow-[0_0_5px_rgba(192,132,252,0.5)]">
+                                    <span className="text-xs text-purple-900 dark:text-primary font-medium flex items-center animate-pulse drop-shadow-[0_0_5px_rgba(192,132,252,0.5)]">
                                         <i className="fas fa-circle-notch fa-spin mr-2"></i> AI Analyzing...
                                     </span>
                                 ) : (
@@ -365,7 +365,7 @@ const App: React.FC = () => {
                                                 .then(setMapping)
                                                 .finally(() => setIsLoading(false));
                                         }}
-                                        className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-primary font-medium transition-colors flex items-center"
+                                        className="text-xs text-slate-500 dark:text-slate-400 hover:text-purple-900 dark:hover:text-primary font-medium transition-colors flex items-center"
                                     >
                                         <i className="fas fa-magic mr-1.5"></i> Regenerate AI Mapping
                                     </button>
@@ -375,7 +375,7 @@ const App: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                                 {Object.keys(mapping).map((field) => (
                                     <div key={field} className="relative group">
-                                        <label className="block text-xs font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider mb-2 transition-colors group-hover:text-purple-500 dark:group-hover:text-purple-300/70">
+                                        <label className="block text-xs font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider mb-2 transition-colors group-hover:text-purple-900 dark:group-hover:text-purple-300/70">
                                             {field.replace(/([A-Z])/g, ' $1').trim()}
                                             {!mapping[field as keyof ColumnMapping] && <span className="text-red-500 dark:text-red-400 ml-1">*</span>}
                                         </label>
@@ -412,7 +412,7 @@ const App: React.FC = () => {
                                 className={`px-8 py-3 rounded-xl font-bold transition-all flex items-center space-x-2 border border-transparent ${
                                     isLoading || isWeightError || !isMappingComplete
                                     ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border-slate-300 dark:border-slate-700'
-                                    : 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:brightness-110 active:scale-95 border-purple-400/20'
+                                    : 'bg-gradient-to-r from-purple-900 to-purple-800 dark:from-purple-600 dark:to-purple-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:brightness-110 active:scale-95 border-purple-400/20'
                                 }`}
                             >
                                 {isLoading ? <span>Matching...</span> : <span>Preview Changes</span>}
@@ -425,21 +425,29 @@ const App: React.FC = () => {
                 {/* STEP 3: PREVIEW */}
                 {step === Step.PREVIEW && (
                     <div className="space-y-8 animate-fade-in">
-                        <PreviewTable matches={matches} config={config} mapping={mapping} />
+                        <PreviewTable 
+                            matches={matches} 
+                            config={config} 
+                            mapping={mapping} 
+                        />
                         
                         <div className="flex justify-between pt-6 border-t border-slate-200 dark:border-slate-800/50">
                             <button 
                                 onClick={() => setStep(Step.CONFIGURE)}
                                 className="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white font-medium px-4 py-2 transition-colors hover:drop-shadow-[0_0_5px_rgba(0,0,0,0.1)] dark:hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]"
                             >
-                                Adjust Configuration
+                                Back
                             </button>
                             <button 
                                 onClick={handleProcess}
                                 disabled={isLoading}
-                                className="bg-gradient-to-r from-emerald-600 to-emerald-500 text-white px-8 py-3 rounded-xl font-bold shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] hover:brightness-110 transition-all flex items-center space-x-2 active:scale-95 border border-emerald-400/20"
+                                className={`px-8 py-3 rounded-xl font-bold transition-all flex items-center space-x-2 border border-transparent ${
+                                    isLoading
+                                    ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border-slate-300 dark:border-slate-700'
+                                    : 'bg-gradient-to-r from-purple-900 to-purple-800 dark:from-purple-600 dark:to-purple-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:brightness-110 active:scale-95 border-purple-400/20'
+                                }`}
                             >
-                                {isLoading ? <span>Processing...</span> : <span>Confirm & Download</span>}
+                                {isLoading ? <span>Processing...</span> : <span>Export Excel</span>}
                                 {!isLoading && <i className="fas fa-file-export"></i>}
                             </button>
                         </div>

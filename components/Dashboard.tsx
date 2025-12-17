@@ -23,7 +23,7 @@ const Dashboard: React.FC<DashboardProps> = ({ matches, config }) => {
         {/* Average */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-            <i className="fas fa-calculator text-4xl text-purple-600"></i>
+            <i className="fas fa-calculator text-4xl text-purple-900 dark:text-purple-500"></i>
           </div>
           <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Class Average</p>
           <div className="mt-2 flex items-baseline">
@@ -75,7 +75,7 @@ const Dashboard: React.FC<DashboardProps> = ({ matches, config }) => {
         {/* Grade Distribution */}
         <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm flex flex-col">
             <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center mb-6">
-                <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-3 text-purple-600 dark:text-purple-400">
+                <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-3 text-purple-900 dark:text-purple-400">
                     <i className="fas fa-chart-bar"></i>
                 </div>
                 Grade Distribution
@@ -93,10 +93,10 @@ const Dashboard: React.FC<DashboardProps> = ({ matches, config }) => {
                              <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-t-lg relative h-full flex items-end overflow-hidden">
                                 <div 
                                     className={`w-full rounded-t-lg transition-all duration-1000 ease-out group-hover:brightness-110 ${
-                                        grade === 'F' ? 'bg-red-400' :
-                                        grade.startsWith('D') ? 'bg-orange-400' :
-                                        grade.startsWith('A') ? 'bg-emerald-500' :
-                                        'bg-purple-500'
+                                        grade === 'F' ? 'bg-red-500 dark:bg-red-500' :
+                                        grade.startsWith('D') ? 'bg-orange-500 dark:bg-orange-500' :
+                                        grade.startsWith('A') ? 'bg-emerald-600 dark:bg-emerald-500' :
+                                        'bg-purple-800 dark:bg-purple-500'
                                     }`}
                                     style={{ height: `${heightPercent}%` }}
                                 ></div>
@@ -129,9 +129,6 @@ const Dashboard: React.FC<DashboardProps> = ({ matches, config }) => {
                         strokeLinecap="round"
                         className="text-emerald-500 transition-all duration-1000 ease-out" 
                      />
-                     {/* Fail Segment Overlay (Actually simpler to just let bg circle show fail, but we can do a second circle for fail color if needed. 
-                        For simplicity, let's assume transparent bg is fail, but to be precise let's add fail color) 
-                     */}
                  </svg>
                  <div className="absolute inset-0 flex flex-col items-center justify-center">
                      <span className="text-3xl font-bold text-slate-800 dark:text-white">{stats.passRate.toFixed(0)}%</span>
@@ -167,7 +164,7 @@ const Dashboard: React.FC<DashboardProps> = ({ matches, config }) => {
                          <span>{stats.components.midterm.toFixed(1)}%</span>
                      </div>
                      <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                         <div className="h-full bg-purple-500 rounded-full" style={{ width: `${Math.min(stats.components.midterm, 100)}%` }}></div>
+                         <div className="h-full bg-purple-800 dark:bg-purple-500 rounded-full" style={{ width: `${Math.min(stats.components.midterm, 100)}%` }}></div>
                      </div>
                 </div>
                 <div className="space-y-1">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { MatchedStudent, ProcessingConfig, ColumnMapping } from '../types';
 import { calculateTotal, getLetterGrade, getGradeColorInfo } from '../services/gradeUtils';
 import GradeDetailModal from './GradeDetailModal';
@@ -15,11 +15,29 @@ const ITEMS_PER_PAGE = 10;
 const PreviewTable: React.FC<PreviewTableProps> = ({ matches, config, mapping }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStudent, setSelectedStudent] = useState<MatchedStudent | null>(null);
+  const [selectedSheet, setSelectedSheet] = useState<string>('All');
+
+  // Extract unique sheet names
+  const uniqueSheets = useMemo(() => {
+    const sheets = new Set(matches.map(m => m.sheetName));
+    return Array.from(sheets).sort();
+  }, [matches]);
+
+  // Filter matches based on selection
+  const filteredMatches = useMemo(() => {
+    if (selectedSheet === 'All') return matches;
+    return matches.filter(m => m.sheetName === selectedSheet);
+  }, [matches, selectedSheet]);
+
+  // Reset pagination when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedSheet]);
 
   // Pagination Logic
-  const totalPages = Math.ceil(matches.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredMatches.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentMatches = matches.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const currentMatches = filteredMatches.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const goToNextPage = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
   const goToPrevPage = () => setCurrentPage((p) => Math.max(p - 1, 1));
@@ -34,17 +52,44 @@ const PreviewTable: React.FC<PreviewTableProps> = ({ matches, config, mapping })
         onClose={() => setSelectedStudent(null)}
       />
 
-      {/* DASHBOARD */}
-      <Dashboard matches={matches} config={config} />
+      {/* Sheet Filter Header */}
+      <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-4 mb-2">
+        <div>
+           <h2 className="text-xl font-bold text-slate-800 dark:text-white">Preview & Statistics</h2>
+           <p className="text-sm text-slate-500 dark:text-slate-400">Review calculated grades before exporting.</p>
+        </div>
+        
+        {uniqueSheets.length > 0 && (
+            <div className="flex items-center space-x-3 bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-2">Filter Sheet:</span>
+                <select 
+                    value={selectedSheet}
+                    onChange={(e) => setSelectedSheet(e.target.value)}
+                    className="bg-slate-50 dark:bg-slate-800 border-none outline-none text-sm font-semibold text-slate-700 dark:text-slate-200 rounded-lg py-1.5 px-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus:ring-2 focus:ring-purple-500/50"
+                >
+                    <option value="All">All Sheets ({matches.length})</option>
+                    {uniqueSheets.map(sheet => (
+                        <option key={sheet} value={sheet}>
+                            {sheet} ({matches.filter(m => m.sheetName === sheet).length})
+                        </option>
+                    ))}
+                </select>
+            </div>
+        )}
+      </div>
+
+      {/* DASHBOARD - Now responsive to filter */}
+      <Dashboard matches={filteredMatches} config={config} />
 
       {/* DATA TABLE */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-xl overflow-hidden shadow-xl dark:shadow-2xl">
         <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950/50">
            <h3 className="font-bold text-slate-700 dark:text-slate-200 flex items-center">
-             <i className="fas fa-table mr-2 text-slate-400"></i> Detailed Grade Sheet
+             <i className="fas fa-table mr-2 text-slate-400"></i> 
+             {selectedSheet === 'All' ? 'Detailed Grade Sheet' : `Grades for ${selectedSheet}`}
            </h3>
            <span className="text-xs text-slate-500 font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1 rounded-full">
-             {matches.length} Students
+             {filteredMatches.length} Students
            </span>
         </div>
 
@@ -58,18 +103,18 @@ const PreviewTable: React.FC<PreviewTableProps> = ({ matches, config, mapping })
                         <th className="px-6 py-4 text-right font-semibold tracking-wider text-slate-600 dark:text-slate-400">Daily</th>
                         <th className="px-6 py-4 text-right font-semibold tracking-wider text-slate-600 dark:text-slate-400">Midterm</th>
                         <th className="px-6 py-4 text-right font-semibold tracking-wider text-slate-600 dark:text-slate-400">Final</th>
-                        <th className="px-6 py-4 text-right bg-purple-50 dark:bg-purple-900/10 text-purple-600 dark:text-purple-300 font-bold border-l border-slate-200 dark:border-slate-800">Total</th>
-                        <th className="px-6 py-4 text-center bg-purple-50 dark:bg-purple-900/10 text-purple-600 dark:text-purple-300 font-bold">Grade</th>
+                        <th className="px-6 py-4 text-right bg-purple-50 dark:bg-purple-900/10 text-purple-900 dark:text-purple-300 font-bold border-l border-slate-200 dark:border-slate-800">Total</th>
+                        <th className="px-6 py-4 text-center bg-purple-50 dark:bg-purple-900/10 text-purple-900 dark:text-purple-300 font-bold">Grade</th>
                         <th className="px-6 py-4 text-center font-semibold tracking-wider text-slate-600 dark:text-slate-400">Proof</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
-                    {matches.length === 0 ? (
+                    {filteredMatches.length === 0 ? (
                         <tr>
                             <td colSpan={9} className="px-6 py-12 text-center text-slate-500 dark:text-slate-600">
                                 <div className="flex flex-col items-center">
                                     <i className="fas fa-search text-3xl mb-3 text-slate-300 dark:text-slate-700"></i>
-                                    <span>No students matched in the template. Please check your IDs.</span>
+                                    <span>No students found in {selectedSheet === 'All' ? 'the template' : 'this sheet'}.</span>
                                 </div>
                             </td>
                         </tr>
@@ -89,7 +134,7 @@ const PreviewTable: React.FC<PreviewTableProps> = ({ matches, config, mapping })
                                     <td className="px-6 py-4 text-right font-mono text-slate-600 dark:text-slate-500">{student.daily.toFixed(1)}</td>
                                     <td className="px-6 py-4 text-right font-mono text-slate-600 dark:text-slate-500">{student.midterm.toFixed(1)}</td>
                                     <td className="px-6 py-4 text-right font-mono text-slate-600 dark:text-slate-500">{student.final.toFixed(1)}</td>
-                                    <td className={`px-6 py-4 text-right font-mono font-bold border-l border-slate-200 dark:border-slate-800 group-hover:bg-purple-100 dark:group-hover:bg-purple-500/10 transition-colors ${colorInfo.isFailing ? colorInfo.css : 'text-purple-600 dark:text-purple-300 bg-purple-50 dark:bg-purple-500/5'}`}>
+                                    <td className={`px-6 py-4 text-right font-mono font-bold border-l border-slate-200 dark:border-slate-800 group-hover:bg-purple-100 dark:group-hover:bg-purple-500/10 transition-colors ${colorInfo.isFailing ? colorInfo.css : 'text-purple-900 dark:text-purple-300 bg-purple-50 dark:bg-purple-500/5'}`}>
                                         {total}
                                     </td>
                                     <td className="px-6 py-4 text-center bg-purple-50 dark:bg-purple-500/5 group-hover:bg-purple-100 dark:group-hover:bg-purple-500/10 transition-colors">
@@ -105,7 +150,7 @@ const PreviewTable: React.FC<PreviewTableProps> = ({ matches, config, mapping })
                                     <td className="px-6 py-4 text-center">
                                         <button 
                                             onClick={() => setSelectedStudent(student)}
-                                            className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-purple-100 dark:hover:bg-purple-900/50 hover:text-purple-600 dark:hover:text-purple-300 transition-all flex items-center justify-center mx-auto shadow-sm hover:shadow-md hover:scale-105"
+                                            className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-purple-100 dark:hover:bg-purple-900/50 hover:text-purple-900 dark:hover:text-purple-300 transition-all flex items-center justify-center mx-auto shadow-sm hover:shadow-md hover:scale-105"
                                             title="View Details"
                                         >
                                             <i className="fas fa-list text-xs"></i>
@@ -120,10 +165,10 @@ const PreviewTable: React.FC<PreviewTableProps> = ({ matches, config, mapping })
         </div>
 
         {/* Pagination Footer */}
-        {matches.length > ITEMS_PER_PAGE && (
+        {filteredMatches.length > ITEMS_PER_PAGE && (
           <div className="flex items-center justify-between px-6 py-4 bg-slate-50 dark:bg-slate-950/50 border-t border-slate-200 dark:border-slate-800">
             <span className="text-xs text-slate-500">
-              Showing <span className="font-medium text-slate-700 dark:text-slate-300">{startIndex + 1}</span> to <span className="font-medium text-slate-700 dark:text-slate-300">{Math.min(startIndex + ITEMS_PER_PAGE, matches.length)}</span> of <span className="font-medium text-slate-700 dark:text-slate-300">{matches.length}</span> results
+              Showing <span className="font-medium text-slate-700 dark:text-slate-300">{startIndex + 1}</span> to <span className="font-medium text-slate-700 dark:text-slate-300">{Math.min(startIndex + ITEMS_PER_PAGE, filteredMatches.length)}</span> of <span className="font-medium text-slate-700 dark:text-slate-300">{filteredMatches.length}</span> results
             </span>
             <div className="flex space-x-2">
               <button 

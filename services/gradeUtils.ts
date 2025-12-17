@@ -46,7 +46,8 @@ export const getGradeColorInfo = (total: number, passingGradeLabel: string) => {
         return { argb: 'FFFF4500', css: 'text-orange-600 dark:text-orange-500', isFailing: true };
     }
 
-    return { argb: null, css: 'text-purple-600 dark:text-purple-300', isFailing: false };
+    // Use dark purple (900) for light mode, light purple (300) for dark mode
+    return { argb: null, css: 'text-purple-900 dark:text-purple-300', isFailing: false };
 };
 
 export const calculateStatistics = (matches: MatchedStudent[], config: ProcessingConfig) => {
