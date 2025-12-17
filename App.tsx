@@ -530,6 +530,11 @@ const App: React.FC = () => {
             </div>
         </div>
       </div>
+      
+      {/* Footer */}
+      <footer className="mt-auto py-4 text-center text-sm text-slate-500 dark:text-slate-600">
+        Developed by <a href="https://rindra.org" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primaryDark transition-colors">rindra.org</a>, 2025
+      </footer>
     </div>
   );
 };
